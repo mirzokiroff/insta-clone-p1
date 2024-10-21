@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block container %}
+    <div class="container mt-5 profile-container">
+        <h2 class="text-center mb-4 title">Edit Profile</h2>
+        {% if messages %}
+            <div>
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data" class="profile-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control input-field" id="username" name="username"
+                       value="{{ user.username }}">
+            </div>
+            <div class="form-group">
+                <label for="first_name">First Name:</label>
+                <input type="text" class="form-control input-field" id="first_name" name="first_name"
+                       value="{{ user.first_name }}">
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                <input type="text" class="form-control input-field" id="last_name" name="last_name"
+                       value="{{ user.last_name }}">
+            </div>
+            <div class="form-group">
+                <label for="bio">Bio:</label>
+                <textarea class="form-control input-field" id="bio" name="bio">{{ user.bio }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="image">Profile Image:</label>
+                <input type="file" class="form-control-file input-field" id="image" name="image">
+                <small class="form-text text-muted">Choose a new profile image (optional).</small>
+            </div>
+            <button type="submit" class="btn btn-primary submit-btn">Save Changes</button>
+        </form>
+        <a href="{% url 'profile' %}" class="btn btn-secondary mt-3 back-btn">Back to Profile</a>
+    </div>
+
+    <!-- Style and Animations -->
+    <style>
+        /* Overall page styling */
+        body {
+            background: linear-gradient(120deg, #4e54c8, #8f94fb);
+            font-family: 'Open Sans', sans-serif;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Container */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Title */
+        .title {
+            color: #ffffff;
+            font-size: 2.5rem;
+            font-weight: 600;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+            letter-spacing: 1.5px;
+        }
+
+        /* Form styling */
+        .profile-form {
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        /* Input fields */
+        .input-field {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            width: 100%;
+            color: #fff;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Textarea specific */
+        textarea.input-field {
+            resize: none;
+            height: 120px;
+        }
+
+        /* Buttons */
+        .submit-btn {
+            background: linear-gradient(120deg, #00c6ff, #0072ff);
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px rgba(0, 114, 255, 0.3);
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(120deg, #0072ff, #00c6ff);
+            transform: scale(1.05);
+            box-shadow: 0 12px 20px rgba(0, 114, 255, 0.4);
+        }
+
+        .back-btn {
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 15px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: scale(1.05);
+        }
+
+        /* Animation */
+        .profile-container {
+            animation: fadeIn 1.2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+{% endblock %}

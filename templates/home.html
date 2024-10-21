@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block container %}
+
+    <div class="second_container">
+        <!-- ***** posts_container start ****** -->
+        <div class="main_section">
+            <div class="posts_container">
+                <div class="stories">
+                    <div class="owl-carousel items"></div>
+                </div>
+
+                <div class="posts"></div>
+            </div>
+        </div>
+        <!-- ***** posts_container end ****** -->
+
+        <!-- ***** followers_container start ****** -->
+        <div class="followers_container">
+            <div>
+                <div class="cart">
+                    <div>
+                        <div class="img">
+                            <img src="{% static 'images/profile_img.jpg' %}"
+                                 alt=""/>
+                        </div>
+                        <div class="info">
+                            <p class="name">{{ current_user.username }}</p>
+                            <p class="second_name">{{ current_user.fullname }}</p>
+                        </div>
+                    </div>
+                    <div class="switch">
+                        <a href="#">Switch</a>
+                    </div>
+                </div>
+                <div class="suggestions">
+                    <div class="title">
+                        <h4>Suggestions for you</h4>
+                        <a class="dark" href="#">See All</a>
+                    </div>
+                    {% for user in suggested_users %}
+                        <div class="cart">
+                            <div>
+                                <div class="img">
+                                    <img src="{{ user.profile_image_url }}" alt=""/>
+                                </div>
+                                <div class="info">
+                                    <p class="name">{{ user.username }}</p>
+                                    <p class="second_name">{{ user.fullname }}</p>
+                                </div>
+                            </div>
+                            <div class="switch">
+                                <button class="follow_text" href="#">follow</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <!-- ***** followers_container end ****** -->
+    </div>
+
+    <!-- Modal for sending posts -->
+    <div class="modal fade" id="send_message_modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Share</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="send">
+                        <div class="search_person">
+                            <p>To:</p>
+                            <input type="text" placeholder="Search"/>
+                        </div>
+                        <p>Suggested</p>
+                        <div class="poeple">
+                            {% for person in suggested_people %}
+                                <div class="person">
+                                    <div class="d-flex">
+                                        <div class="img">
+                                            <img src="{{ person.profile_image_url }}" alt=""/>
+                                        </div>
+                                        <div class="content">
+                                            <div class="person">
+                                                <h4>{{ person.username }}</h4>
+                                                <span>{{ person.fullname }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="circle">
+                                        <span></span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for add messages -->
+    <div class="modal fade" id="message_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Comments</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="comments">
+                        {% for comment in post.comments %}
+                            <div class="comment">
+                                <div class="d-flex">
+                                    <div class="img">
+                                        <img src="{{ comment.user.profile_image_url }}" alt=""/>
+                                    </div>
+                                    <div class="content">
+                                        <div class="person">
+                                            <h4>{{ comment.user.username }}</h4>
+                                            <span>{{ comment.posted_ago }}</span>
+                                        </div>
+                                        <p>{{ comment.text }}</p>
+                                        <div class="replay">
+                                            <button class="replay">reply</button>
+                                            <button class="translation">see translation</button>
+                                        </div>
+                                        <div class="answers">
+                                            <button class="see_comment">
+                                                <span class="hide_com">Hide all responses</span>
+                                                <span class="show_c"><span
+                                                        class="line"></span> See the <span>{{ comment.replies|length }}</span> answers</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="like">
+
+                                    <img class="not_loved" src="{% static 'images/love.png' %}"
+                                         alt=""/>
+
+                                    <img class="loved" src="{% static 'images/heart.png' %}"
+                                         alt=""/>
+                                    <p>{{ comment.likes }}</p>
+                                </div>
+                            </div>
+                            {% if comment.replies %}
+                                <div class="responses">
+                                    {% for reply in comment.replies %}
+                                        <div class="response comment">
+                                            <div class="d-flex">
+                                                <div class="img">
+                                                    <img src="{{ reply.user.profile_image_url }}" alt=""/>
+                                                </div>
+                                                <div class="content">
+                                                    <div class="person">
+                                                        <h4>{{ reply.user.username }}</h4>
+                                                        <span>{{ reply.posted_ago }}</span>
+                                                    </div>
+                                                    <p>{{ reply.text }}</p>
+                                                    <div class="replay">
+                                                        <button>reply</button>
+                                                        <button>see translation</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="like">
+                                                <img class="not_loved"
+                                                     src="{% static 'images/love.png' %}"
+                                                     alt=""/>
+                                                <img class="loved"
+                                                     src="{% static 'images/heart.png' %}"
+                                                     alt=""/>
+                                                <p>{{ reply.likes }}</p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <form method="post">
+                        <div class="input">
+                            <img src="{{ current_user.profile_image_url }}" alt=""/>
+                            <input type="text" id="emoji_comment" placeholder="Add a comment..."/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create model -->
+    <div class="modal fade" id="create_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title w-100 fs-5 d-flex align-items-end justify-content-between"
+                        id="exampleModalLabel">
+                        <span class="title_create">Create new post</span>
+                        <button class="next_btn_post btn_link"></button>
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img class="up_load" src="{% static 'images/upload.png' %}"
+                         alt="upload"/>
+                    <p>Drag photos and videos here</p>
+                    <button class="btn btn-primary btn_upload">
+                        select from your computer
+                        <form id="upload-form" enctype="multipart/form-data">
+                            <input class="input_select" type="file" id="image-upload" name="image-upload"/>
+                        </form>
+                    </button>
+                    <div id="image-container" class="hide_img"></div>
+                    <div id="image_description" class="hide_img">
+                        <div class="img_p"></div>
+                        <div class="description">
+                            <div class="cart">
+                                <div>
+                                    <div class="img">
+                                        <img src="{{ current_user.profile_image_url }}"/>
+                                    </div>
+                                    <div class="info">
+                                        <p class="name">{{ current_user.username }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <form>
+                                <textarea type="text" id="emoji_create" placeholder="Write your caption..."></textarea>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="post_published hide_img">
+                        <img src="{% static 'images/uploaded_post.gif' %}"
+                             alt=""/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

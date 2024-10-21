@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block container %}
+    <div class="explore_container">
+    </div>
+
+    <!-- Create Modal -->
+    <div class="modal fade" id="create_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title w-100 fs-5 d-flex align-items-end justify-content-between"
+                        id="exampleModalLabel">
+                        <span class="title_create">Create new post</span>
+                        <button class="next_btn_post btn_link"></button>
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img class="up_load" src="{% static 'images/upload.png' %}" alt="upload">
+                    <p>Drag photos and videos here</p>
+                    <button class="btn btn-primary btn_upload">
+                        Select from your computer
+                        <form id="upload-form">
+                            <input class="input_select" type="file" id="image-upload" name="image-upload">
+                        </form>
+                    </button>
+                    <div id="image-container" class="hide_img"></div>
+                    <div id="image_description" class="hide_img">
+                        <div class="img_p"></div>
+                        <div class="description">
+                            <div class="cart">
+                                <div>
+                                    <div class="img">
+                                        <img src="{% static 'images/profile_img.jpg' %}">
+                                    </div>
+                                    <div class="info">
+                                        <p class="name">Zineb_essoussi</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <form>
+                                <textarea type="text" id="emoji_create" placeholder="write your email"></textarea>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="post_published hide_img">
+                        <img src="{% static 'images/uploaded_post.gif' %}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<style>
+    /* General styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7f9fc;
+    }
+
+    .explore_container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    }
+
+    .modal-content {
+        border-radius: 10px;
+        background-color: #ffffff;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        animation: fadeInUp 0.5s ease;
+    }
+
+    .modal-header {
+        border-bottom: none;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+
+    .title_create {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .btn_link {
+        background-color: #007bff;
+        border: none;
+        padding: 10px 20px;
+        color: white;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn_link:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-close {
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+    }
+
+    .modal-body {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .up_load {
+        width: 80px;
+        margin-bottom: 15px;
+        border-radius: 50%;
+        border: 2px solid #007bff;
+        padding: 10px;
+    }
+
+    .modal-body p {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #666;
+    }
+
+    .btn_upload {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 30px;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+        margin-top: 15px;
+        cursor: pointer;
+    }
+
+    .btn_upload:hover {
+        background-color: #0056b3;
+    }
+
+    .hide_img {
+        display: none;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        resize: none;
+        outline: none;
+        margin-top: 10px;
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    textarea:focus {
+        border-color: #007bff;
+    }
+
+    .post_published img {
+        width: 100%;
+        border-radius: 10px;
+    }
+
+    .description .cart {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+    }
+
+    .description .img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .description .img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .description .info {
+        margin-left: 10px;
+    }
+
+    .description .info .name {
+        font-weight: 600;
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .input_select {
+        display: none;
+    }
+
+    /* Additional animations */
+    @keyframes fadeInUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>

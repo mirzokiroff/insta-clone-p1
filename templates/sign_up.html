@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instagram</title>
+    <link rel="stylesheet" href="{% static './sass/vender/bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static './sass/vender/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static './sass/main.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="sign_up">
+        <div class="content">
+          <div class="log-on border_insc">
+            <div class="logo">
+              <img src="{% static 'images/logo.png' %}" alt="Instagram logo" />
+              <p>Sign up to see photos and videos from your friends.</p>
+              <button class="btn log_fac">
+                <a href="#">
+                  <img src="{% static 'images/facebook_white.png' %}" alt="facebook icon" />
+                  Log in with Facebook
+                </a>
+              </button>
+              <div class="seperator">
+                <span class="ligne"></span>
+                <span class="ou">OR</span>
+                <span class="ligne"></span>
+              </div>
+            </div>
+            <form action="" method="post">
+              {% csrf_token %}
+              {% if messages %}
+                <div class="alert alert-danger" role="alert">
+                  {% for message in messages %}
+                    {{ message }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+              <div>
+                <input type="email" name="email" id="email" placeholder="Email address" required />
+              </div>
+              <div>
+                <input type="text" name="name" id="name" placeholder="Full Name" required />
+              </div>
+              <div>
+                <input type="text" name="username" id="username" placeholder="Username" required />
+              </div>
+              <div>
+                <input type="password" name="password1" id="password1" placeholder="Password" required />
+              </div>
+              <div>
+                <input type="password" name="password2" id="password2" placeholder="Confirm Password" required />
+              </div>
+              <div class="info">
+                <p>
+                  People who use our service may have uploaded your contact information to Instagram. <a href="#">Learn more</a>
+                </p>
+                <p>
+                  By signing up, you agree to our <a href="#">Terms, Privacy Policy and Cookies Policy.</a>
+                </p>
+              </div>
+              <button type="submit" class="log_btn">Sign Up</button>
+            </form>
+          </div>
+          <div class="sing-in border_insc">
+            <p>
+              Have an account?
+              <a href="{% url 'sign_in' %}">Log in</a>
+            </p>
+          </div>
+          <div class="download">
+            <p>Get the app.</p>
+            <div>
+              <img src="{% static 'images/google_play_icon.png' %}" alt="Download app from Google Play" />
+              <img src="{% static 'images/microsoft-icon.png' %}" alt="Download app from Microsoft" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
