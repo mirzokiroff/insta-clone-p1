@@ -65,11 +65,12 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#create_modal">
+                            <a href="{% url 'create_post' %}">
                                 <img src="{% static 'images/tab.png' %}" alt="Create"/>
                                 <span class="d-none d-lg-block">Create</span>
                             </a>
                         </li>
+
                         <li>
                             <a href="{% url 'profile' %}">
                                 <img class="circle story" src="{% static 'images/profile_img.jpg' %}"/>

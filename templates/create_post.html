@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block container %}
+    <div class="container">
+        <div class="post-form-wrapper">
+            <h2>Create a New Post</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.media_post.label_tag }}<br>
+                    {{ form.media_post }}
+                </div>
+                <div class="form-group">
+                    {{ form.text.label_tag }}
+                    {{ form.text }}
+                </div>
+                <div class="form-group">
+                    {{ form.tag.label_tag }}
+                    {{ form.tag }}
+                </div>
+                <div class="form-group">
+                    {{ form.location.label_tag }}
+                    {{ form.location }}
+                </div>
+                <div class="form-group">
+                    {{ form.alt_text.label_tag }}
+                    {{ form.alt_text }}
+                </div>
+                <div class="form-group">
+                    {{ form.image_description.label_tag }}
+                    {{ form.image_description }}
+                </div>
+                <div class="form-group">
+                    {{ form.location_description.label_tag }}
+                    {{ form.location_description }}
+                </div>
+                <div class="form-group">
+                    {{ form.audio_description.label_tag }}
+                    {{ form.audio_description }}
+                </div>
+                <button type="submit" class="btn-submit">Post</button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        /* Make the form more Instagram-like and modern */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #fafafa;
+        }
+
+        .post-form-wrapper {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-form-wrapper h2 {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            font-family: 'Helvetica', sans-serif;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input[type="file"],
+        .form-group input[type="text"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 14px;
+            background-color: #fafafa;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input[type="file"]:hover,
+        .form-group input[type="text"]:hover,
+        .form-group textarea:hover,
+        .form-group select:hover {
+            border-color: #b3b3b3;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea {
+            font-family: 'Arial', sans-serif;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: 'Helvetica', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #007bbf;
+        }
+    </style>
+{% endblock %}

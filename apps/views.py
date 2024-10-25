@@ -1,22 +1,22 @@
-import uuid
-
+from django.contrib import messages
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 
-from apps.forms import PostForm, MediaForm
+from apps.forms import PostForm
 from apps.models import UserProfile, Post
-from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.auth.decorators import login_required
 
 
-# @login_required(login_url="sign_in")
+@login_required(login_url="sign_in")
 def UserProfileView(request):
-    # users = UserProfile.objects.all()
-    user = request.user
-    posts = Post.objects.filter(user=user)
-    return render(request, "profile.html", {"users": user, "posts": posts})
+    user_profile = request.user
+    posts = Post.objects.filter(user=request.user)
+    return render(request, "profile.html", {"users": user_profile, "posts": posts})
 
 
 @login_required(login_url="sign_in")
@@ -77,12 +77,10 @@ def sign_in(request):
         try:
             user = UserProfile.objects.get(username=username)
             # Check the hashed password
-            if check_password(
-                    password, user.password
-            ):  # Correctly check the hashed password
+            if check_password(password, user.password):
                 login(request, user)  # Log the user in
                 messages.success(request, "Logged in successfully")
-                return redirect("profile")
+                return redirect("profile")  # Foydalanuvchini o'z profili sahifasiga yo'naltirish
             else:
                 messages.error(request, "Invalid username or password")
         except UserProfile.DoesNotExist:
@@ -130,29 +128,13 @@ def edit_profile(request):
 @login_required(login_url='sign_in')
 def create_post(request):
     if request.method == 'POST':
-        post_form = PostForm(request.POST)
-        media_form = MediaForm(request.POST, request.FILES)
-
-        if post_form.is_valid() and media_form.is_valid():
-            # Save media file
-            media = media_form.save(commit=False)
-            media.user = request.user
-            media.save()
-
-            # Save post
-            post = post_form.save(commit=False)
-            post.id = str(uuid.uuid4())  # Generate a unique ID for the post
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
             post.user = request.user
             post.save()
-
-            # Add media to the post
-            post.media.add(media)
-            post.save()
-
-            return redirect('home')  # Redirect to a relevant page, e.g., home
-
+            return redirect('home')
     else:
-        post_form = PostForm()
-        media_form = MediaForm()
+        form = PostForm()
+    return render(request, 'create_post.html', {'form': form})
 
-    return render(request, 'create_post.html', {'post_form': post_form, 'media_form': media_form})

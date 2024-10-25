@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .forms import UserProfileForm, PostForm
 from .models import UserProfile, Post
 

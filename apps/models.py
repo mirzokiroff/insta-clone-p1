@@ -1,3 +1,4 @@
+import uuid
 from pathlib import Path
 
 from django.core.exceptions import ValidationError
@@ -14,21 +15,20 @@ class CustomFileExtensionValidator(FileExtensionValidator):
         "Allowed extensions are: {allowed_extensions}s."
     )
 
-    def __call__(self, values):
-        for value in values:
-            extension = Path(value.name).suffix[1:].lower()
-            if (
-                    self.allowed_extensions is not None
-                    and extension not in self.allowed_extensions
-            ):
-                raise ValidationError(
-                    self.message.format(**{
-                        "extension": extension,
-                        "allowed_extensions": ", ".join(self.allowed_extensions),
-                        "value": value,
-                    }),
-                    code=self.code,
-                )
+    def __call__(self, value):
+        extension = Path(value.name).suffix[1:].lower()  # value bu erda fayl obyekti
+        if (
+                self.allowed_extensions is not None
+                and extension not in self.allowed_extensions
+        ):
+            raise ValidationError(
+                self.message.format(**{
+                    "extension": extension,
+                    "allowed_extensions": ", ".join(self.allowed_extensions),
+                    "value": value,
+                }),
+                code=self.code,
+            )
 
 
 file_ext_validator = CustomFileExtensionValidator(
@@ -54,22 +54,14 @@ class UserProfile(AbstractUser):
     #     return f"{first_name} {last_name}"
 
 
-class Media(Model):
-    user = ForeignKey('apps.UserProfile', CASCADE, related_name='media_user', null=True, blank=True)
-    file = FileField(upload_to='all_media/', validators=(file_ext_validator,))
-    date = DateTimeField(auto_now_add=True)
-
-
 class Post(Model):
-    id = CharField(primary_key=True, max_length=36, unique=True)
+    id = CharField(primary_key=True, max_length=36, unique=True, default=uuid.uuid4)
     user = ForeignKey('apps.UserProfile', CASCADE, related_name='post_user')
     tag = ForeignKey('apps.UserProfile', CASCADE, related_name="post_tags", blank=True, null=True)
     date = DateTimeField(auto_now_add=True)
     location = CharField(max_length=222, blank=True, null=True)
-    media = ManyToManyField('apps.Media', related_name='posts')
-    text = TextField(default='bu erda siz o\'ylagan ibora bor', blank=True, null=True)
-
-    # Accessibility info
+    media_post = FileField(upload_to='media_post/', validators=([file_ext_validator]))
+    text = TextField(default="bu erda siz o'ylagan ibora bor", blank=True, null=True)
     alt_text = TextField(blank=True, null=True)
     image_description = TextField(blank=True, null=True)
     location_description = TextField(blank=True, null=True)

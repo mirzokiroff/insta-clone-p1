@@ -1,6 +1,6 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, Textarea, TextInput
 
-from apps.models import UserProfile, Post, Media
+from apps.models import UserProfile, Post
 
 
 class UserProfileForm(ModelForm):
@@ -12,13 +12,13 @@ class UserProfileForm(ModelForm):
 #       fields ga nima qo'shsak oshani admin sahifada boshqara olamiz
 
 
-class MediaForm(ModelForm):
-    class Meta:
-        model = Media
-        fields = '__all__'
-
-
 class PostForm(ModelForm):
     class Meta:
         model = Post
-        exclude = ['id']
+        fields = ['media_post', 'text', 'tag', 'location', 'alt_text', 'image_description', 'location_description',
+                  'audio_description']
+        widgets = {
+            'text': Textarea(attrs={'placeholder': "Write your thoughts here...", 'rows': 3}),
+            'location': TextInput(attrs={'placeholder': "Add location"}),
+            'alt_text': Textarea(attrs={'placeholder': "Add image description", 'rows': 2}),
+        }
