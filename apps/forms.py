@@ -15,8 +15,7 @@ class UserProfileForm(ModelForm):
 class PostForm(ModelForm):
     class Meta:
         model = Post
-        fields = ['media_post', 'text', 'tag', 'location', 'alt_text', 'image_description', 'location_description',
-                  'audio_description']
+        fields = ['media_post', 'text', 'tag', 'location']
         widgets = {
             'text': Textarea(attrs={'placeholder': "Write your thoughts here...", 'rows': 3}),
             'location': TextInput(attrs={'placeholder': "Add location"}),

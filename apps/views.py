@@ -21,7 +21,20 @@ def UserProfileView(request):
 
 @login_required(login_url="sign_in")
 def HomeView(request):
-    return render(request, "home.html")
+    # Foydalanuvchining obunachilarini olish
+    user_profile = UserProfile.objects.get(id=request.user.id)
+    following_users = user_profile.following.all()  # Agar following bilan bog'langan bo'lsa
+
+    # Har bir obunachining postlarini olish
+    posts = Post.objects.filter(user__in=following_users).select_related('user').order_by('-date')
+
+    context = {
+        'posts': posts,
+        'current_user': user_profile,
+        'suggested_users': UserProfile.objects.exclude(id=user_profile.id)[:5],
+        # Tavsiya etilgan foydalanuvchilar uchun
+    }
+    return render(request, "home.html", context)
 
 
 @login_required(login_url="sign_in")
@@ -137,4 +150,3 @@ def create_post(request):
     else:
         form = PostForm()
     return render(request, 'create_post.html', {'form': form})
-
