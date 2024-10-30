@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block container %}
+
+    <main class="explore-container">
+        {% for post in posts %}
+            <div class="explore-card">
+                <img src="{{ post.media_post.url }}" alt="User Post">
+                <div class="post-info">
+                    <p>
+                        <a href="{% url 'profile' %}"
+                           class="username-link">{{ post.user.username }}</a>
+                    </p>
+                    <span>💬 {{ post.get_number_of_comments }} | ❤️ {{ post.get_number_of_likes }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <p>No posts available.</p>
+        {% endfor %}
+    </main>
+
+
+    <!-- CSS style -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fafafa;
+        }
+
+        header {
+            text-align: center;
+            padding: 1rem;
+            border-bottom: 1px solid #dbdbdb;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #262626;
+        }
+
+        .explore-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 1rem;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .explore-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: #fff;
+            border: 1px solid #dbdbdb;
+        }
+
+        .explore-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .post-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 10px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-info p {
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .post-info span {
+            font-size: 13px;
+        }
+    </style>
+
+{% endblock %}

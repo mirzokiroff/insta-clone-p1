@@ -2,21 +2,36 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 
 from apps.forms import PostForm
-from apps.models import UserProfile, Post
+from apps.models import UserProfile, Post, Reels
 
 
 @login_required(login_url="sign_in")
 def UserProfileView(request):
-    user_profile = request.user
-    posts = Post.objects.filter(user=request.user)
-    return render(request, "profile.html", {"users": user_profile, "posts": posts})
+    user_profile = request.user  # Hozirgi foydalanuvchini olish
+    posts = Post.objects.filter(user=user_profile)
+    tagged_posts = Post.objects.filter(tag=user_profile)
+
+    return render(request, "profile.html", {
+        "users": user_profile,
+        "posts": posts,
+        "tagged_posts": tagged_posts,
+    })
+
+
+# def other_users_profile(request, username):
+# print(f"Attempting to retrieve UserProfile with username: {username}")
+# user_profile = get_object_or_404(UserProfile, username=username)  # Username bilan foydalanuvchini olish
+# posts = Post.objects.filter(user=user_profile)  # Foydalanuvchining postlarini olish
+# tagged_posts = Post.objects.filter(tag=user_profile)  # Foydalanuvchi tagida bo'lgan postlar
+# return render(request, "other_users.html", {
+# "user": user_profile,
+# "posts": posts,
+# "tagged_posts": tagged_posts
+# })
 
 
 @login_required(login_url="sign_in")
@@ -39,7 +54,10 @@ def HomeView(request):
 
 @login_required(login_url="sign_in")
 def ExploreView(request):
-    return render(request, "explore.html")
+    posts = Post.objects.all()
+    reels = Reels.objects.all()
+    users = UserProfile.objects.all()
+    return render(request, "exploree.html", {"posts": posts, "reels": reels, "user": users})
 
 
 @login_required(login_url="sign_in")
@@ -89,11 +107,10 @@ def sign_in(request):
 
         try:
             user = UserProfile.objects.get(username=username)
-            # Check the hashed password
             if check_password(password, user.password):
                 login(request, user)  # Log the user in
                 messages.success(request, "Logged in successfully")
-                return redirect("profile")  # Foydalanuvchini o'z profili sahifasiga yo'naltirish
+                return redirect("profile")
             else:
                 messages.error(request, "Invalid username or password")
         except UserProfile.DoesNotExist:
@@ -150,3 +167,19 @@ def create_post(request):
     else:
         form = PostForm()
     return render(request, 'create_post.html', {'form': form})
+
+
+@login_required(login_url="sign_in")
+def follow_unfollow(request, username):
+    user_to_follow = get_object_or_404(UserProfile, username=username)
+
+    if request.user in user_to_follow.followers.all():
+        # Unfollow
+        user_to_follow.followers.remove(request.user)
+        request.user.following.remove(user_to_follow)
+    else:
+        # Follow
+        user_to_follow.followers.add(request.user)
+        request.user.following.add(user_to_follow)
+
+    return redirect('other_users', username=username)

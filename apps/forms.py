@@ -19,5 +19,4 @@ class PostForm(ModelForm):
         widgets = {
             'text': Textarea(attrs={'placeholder': "Write your thoughts here...", 'rows': 3}),
             'location': TextInput(attrs={'placeholder': "Add location"}),
-            'alt_text': Textarea(attrs={'placeholder': "Add image description", 'rows': 2}),
         }

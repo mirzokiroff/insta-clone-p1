@@ -330,40 +330,28 @@
                 <div class="info">
                     <p class="name">
                         {{ user.username }}
-                        <a href="{% url 'edit_profile' %}" class="btn btn-primary btn-sm edit_profile">Edit Profile</a>
+                        {% if request.user.username != user.username %}
+                            <a href="{% url 'edit_profile' %}" class="btn btn-primary btn-sm edit_profile">Edit
+                                Profile</a>
+                        {% endif %}
                     </p>
                     <div class="general_info">
                         <p>
-                            <span>{{ user.posts_count }}</span> post
+                            <span>{{ posts.count }}</span> post
                         </p>
                         <p>
-                            <span>{{ user.followers_count }}</span> followers
+                            <span>{{ user.followers.count }}</span> followers
                         </p>
                         <p>
-                            <span>{{ user.following_count }}</span> following
+                            <span>{{ user.following.count }}</span> following
                         </p>
                     </div>
                     <p class="nick_name">{{ user.get_full_name }}</p>
-                    <p class="desc">
-                        {{ user.bio }}
-                    </p>
+                    <p class="desc">{{ user.bio }}</p>
                 </div>
             </div>
         </div>
-        <div class="highlights">
-            <div class="highlight">
-                <div class="img">
-                    <img src="{% static 'images/profile_img.jpg' %}" alt=""/>
-                </div>
-                <p>conseils</p>
-            </div>
-            <div class="highlight highlight_add">
-                <div class="img">
-                    <img src="{% static 'images/plus.png' %}" alt=""/>
-                </div>
-                <p>New</p>
-            </div>
-        </div>
+
         <hr/>
         <div class="posts_profile">
             <ul class="nav-pills w-100 d-flex justify-content-center" id="pills-tab" role="tablist">
@@ -407,7 +395,6 @@
                     </div>
                 </div>
 
-
                 <!-- Saved Section -->
                 <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab"
                      tabindex="0">
@@ -426,7 +413,7 @@
                                     <img class="img-fluid item_img" src="{{ post.media_post.url }}"
                                          alt="{{ post.text }}">
                                     <p>
-                                        <a href="{% url 'profile' %}"
+                                        <a href="{% url 'other_users' post.user.username %}"
                                            class="username-link">{{ post.user.username }}</a>
                                     </p>
                                     <span>💬 {{ post.get_number_of_comments }} | ❤️ {{ post.get_number_of_likes }}</span>
@@ -437,11 +424,10 @@
                         {% endif %}
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>
+
     <!-- JavaScript to Show Save Button -->
     <script>
         function showSaveButton() {

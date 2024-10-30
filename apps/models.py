@@ -41,9 +41,9 @@ file_ext_validator = CustomFileExtensionValidator(
 class UserProfile(AbstractUser):
     image = ImageField(upload_to="user_profile_pics", null=True, blank=True)
     phone = CharField(max_length=70)
-    followers = ManyToManyField(settings.AUTH_USER_MODEL, related_name='my_followers', symmetrical=False, blank=True)
-    following = ManyToManyField(settings.AUTH_USER_MODEL, related_name='my_following', symmetrical=False, blank=True)
-    likes = ManyToManyField(settings.AUTH_USER_MODEL, related_name='my_likes', symmetrical=False, blank=True)
+    followers = ManyToManyField("apps.UserProfile", related_name='my_followers', symmetrical=False, blank=True)
+    following = ManyToManyField("apps.UserProfile", related_name='my_following', symmetrical=False, blank=True)
+    likes = ManyToManyField("apps.UserProfile", related_name='my_likes', symmetrical=False, blank=True)
     is_public = BooleanField(default=True)
     user_posts = ManyToManyField('Post', related_name='users_posts', blank=True)
     user_reels = ManyToManyField('Reels', related_name='users_reels', blank=True)
@@ -69,17 +69,18 @@ class UserProfile(AbstractUser):
         return self.user_posts.count()
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.username + " " + self.first_name + " " + self.last_name
 
 
 class Post(Model):
     id = CharField(primary_key=True, max_length=36, unique=True, default=uuid.uuid4)
-    user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=CASCADE, related_name='post_user')
-    tag = ForeignKey(settings.AUTH_USER_MODEL, on_delete=CASCADE, related_name="post_tags", blank=True, null=True)
+    user = ForeignKey("apps.UserProfile", on_delete=CASCADE, related_name='post_user')
+    tag = ForeignKey("apps.UserProfile", on_delete=CASCADE, related_name="post_tags", blank=True, null=True)
     date = DateTimeField(auto_now_add=True)
     location = CharField(max_length=222, blank=True, null=True)
     media_post = FileField(upload_to='media_post/', validators=([file_ext_validator]))
     text = TextField(default="bu erda siz o'ylagan ibora bor", blank=True, null=True)
+    is_saved = BooleanField(default=False)
 
     @property
     def get_number_of_likes(self):
@@ -98,7 +99,7 @@ class Post(Model):
 
 class Reels(Model):
     id = CharField(primary_key=True, max_length=36, default=uuid.uuid4)
-    user = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name='reels_user')
+    user = ForeignKey("apps.UserProfile", CASCADE, related_name='reels_user')
     caption = TextField(null=True, blank=True)
     media = FileField(upload_to='reels/', validators=[FileExtensionValidator(['mp4', 'avi', 'mkv', 'mov'])])
 
@@ -113,7 +114,7 @@ class Reels(Model):
 
 class Comment(Model):
     id = CharField(primary_key=True, max_length=36, default=uuid.uuid4)
-    user = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name='comment_user')
+    user = ForeignKey("apps.UserProfile", CASCADE, related_name='comment_user')
     comment = TextField()
     date = DateTimeField(auto_now_add=True)
     post = ForeignKey('Post', CASCADE, related_name='post_comments', null=True, blank=True)
@@ -132,10 +133,10 @@ class Comment(Model):
 
 class Story(Model):
     id = CharField(primary_key=True, max_length=36, default=uuid.uuid4)
-    user = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name='story_user')
+    user = ForeignKey("apps.UserProfile", CASCADE, related_name='story_user')
     story = FileField(upload_to='story/', validators=[FileExtensionValidator(['mp4', 'jpg', 'png', 'mov'])])
-    mention = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name="mentioned_users", null=True, blank=True)
-    viewer = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name='story_viewers', null=True, blank=True)
+    mention = ForeignKey("apps.UserProfile", CASCADE, related_name="mentioned_users", null=True, blank=True)
+    viewer = ForeignKey("apps.UserProfile", CASCADE, related_name='story_viewers', null=True, blank=True)
     date = DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -160,7 +161,7 @@ class Story(Model):
 
 class Highlight(Model):
     id = CharField(primary_key=True, max_length=36, default=uuid.uuid4)
-    user = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name='highlight_user')
+    user = ForeignKey("apps.UserProfile", CASCADE, related_name='highlight_user')
     name = CharField(max_length=77)
     date = DateTimeField(auto_now_add=True)
     highlight = ForeignKey('Story', CASCADE, related_name='highlight')
@@ -174,14 +175,14 @@ class Highlight(Model):
 
 
 class Viewers(Model):
-    user = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name='user_view')
+    user = ForeignKey("apps.UserProfile", CASCADE, related_name='user_view')
     post = ForeignKey('Post', CASCADE, related_name='post_view')
     reel = ForeignKey('Reels', CASCADE, related_name='reel_view')
     story = ForeignKey('Story', CASCADE, related_name='story_view')
 
 
 class PostLike(Model):
-    user = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name='post_like_user', null=True, blank=True)
+    user = ForeignKey("apps.UserProfile", CASCADE, related_name='post_like_user', null=True, blank=True)
     post = ForeignKey('Post', CASCADE, related_name='post_likes')
 
     def __str__(self):
@@ -189,7 +190,7 @@ class PostLike(Model):
 
 
 class StoryLike(Model):
-    user = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name='story_like_user')
+    user = ForeignKey("apps.UserProfile", CASCADE, related_name='story_like_user')
     story = ForeignKey('Story', CASCADE, related_name='story_likes')
 
     def __str__(self):
@@ -197,7 +198,7 @@ class StoryLike(Model):
 
 
 class CommentLike(Model):
-    user = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name='comment_liked_user')
+    user = ForeignKey("apps.UserProfile", CASCADE, related_name='comment_liked_user')
     comment = ForeignKey('Comment', CASCADE, related_name='comment_likes')
 
     def __str__(self):
@@ -205,7 +206,7 @@ class CommentLike(Model):
 
 
 class ReelsLike(Model):
-    user = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name='reels_like_user')
+    user = ForeignKey("apps.UserProfile", CASCADE, related_name='reels_like_user')
     reels = ForeignKey('Reels', CASCADE, related_name='reels_likes')
 
     def __str__(self):
@@ -213,7 +214,7 @@ class ReelsLike(Model):
 
 
 class HighlightLike(Model):
-    user = ForeignKey(settings.AUTH_USER_MODEL, CASCADE, related_name='highlight_like_user')
+    user = ForeignKey("apps.UserProfile", CASCADE, related_name='highlight_like_user')
     highlight = ForeignKey('Highlight', CASCADE, related_name='highlight_likes')
 
     def __str__(self):
