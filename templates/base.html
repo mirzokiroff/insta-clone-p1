@@ -150,21 +150,6 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="left">
-                        <div class="search_bar">
-                            <div class="input-group">
-                                <div class="form-outline">
-                                    <div>
-                                        <img src="{% static 'images/search.png' %}" alt="search"/>
-                                    </div>
-                                    <input type="search" id="form1" class="form-control" placeholder="Search"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="notifications notification_icon">
-                            <a href="./notification.html"><img src="{% static 'images/love.png' %}"/></a>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -198,42 +183,25 @@
         <div class="nav_bottom">
             <a href="./home.html"><img src="{% static 'images/accueil.png' %}"/></a>
             <a href="exploree.html"><img src="{% static 'images/compass.png' %}"/></a>
-            <a href="./reels.html"><img src="{% static 'images/video.png' %}"/></a>
+            <a href="reels.html"><img src="{% static 'images/video.png' %}"/></a>
             <a href="#" data-bs-toggle="modal" data-bs-target="#create_modal"><img src="{% static 'images/tab.png' %}"/></a>
             <a href="profile.html"><img class="circle story" src="{% static 'images/profile_img.jpg' %}"/></a>
         </div>
     </div>
+
     <!-- search -->
     <div id="search" class="search_section">
         <h2>Search</h2>
-        <form method="post">
-            <input type="text" placeholder="Search"/>
+        <form id="searchForm" method="post" action="{% url 'search_users' %}">
+            {% csrf_token %}
+            <input type="text" name="query" placeholder="Search"/>
+            <button type="submit">Search</button>
         </form>
         <div class="find">
-            <div class="desc">
-                <h4>Recent</h4>
-                <p>
-                    <a href="#">Clear all</a>
-                </p>
-            </div>
-            <div class="account">
-                <div class="cart">
-                    <div>
-                        <div class="img">
-                            <img src="{% static 'images/profile_img.jpg' %}" alt=""/>
-                        </div>
-                        <div class="info">
-                            <p class="name">Zineb_essoussi</p>
-                            <p class="second_name">Zim Ess</p>
-                        </div>
-                    </div>
-                    <div class="clear">
-                        <a href="#">X</a>
-                    </div>
-                </div>
-            </div>
+            <div id="searchResults" class="find_results"></div>
         </div>
     </div>
+
     <!-- search -->
     <!-- notification -->
     <div id="notification" class="notification_section">
@@ -277,5 +245,58 @@
 <script src="{% static './js/carousel.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
 <script src="{% static './js/main.js' %}"></script>
+
+<script>
+    document.getElementById("searchForm").addEventListener("submit", function (event) {
+        event.preventDefault();  // Prevent default form submission
+
+        const query = document.querySelector("input[name='query']").value;
+        const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+        fetch("{% url 'search_users' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: new URLSearchParams({"query": query})
+        })
+            .then(response => response.json())
+            .then(data => {
+                const searchResults = document.getElementById("searchResults");
+                searchResults.innerHTML = "";  // Clear previous results
+
+                if (data.results && data.results.length > 0) {
+                    data.results.forEach(user => {
+                        // Use a default image if user.image_url is empty or null
+                        const imageUrl = user.image_url || "{% static 'static/images/profile_img.jpg' %}";
+                        searchResults.innerHTML += `
+                        <div class="account">
+                            <div class="cart">
+                                <div>
+                                    <div class="img">
+                                        <img src="${imageUrl}" alt="${user.username}"/>
+                                    </div>
+                                    <div class="info">
+                                        <p class="name">${user.username}</p>
+                                        <p class="second_name">${user.full_name}</p>
+                                    </div>
+                                </div>
+                                <div class="clear">
+                                    <a href="#">X</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    });
+                } else {
+                    searchResults.innerHTML = "<p>User Topilmadi !</p>";
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    });
+</script>
+
 </body>
 </html>

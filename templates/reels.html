@@ -1,170 +1,89 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
-  <!-- Modal for add messages -->
-  <div class="modal fade" id="message_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Comments</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="comments">
-            <div class="comment">
-              <div class="d-flex">
-                <div class="img">
-                  <img src="{% static 'images/profile_img.jpg' %}" alt="" />
-                </div>
-                <div class="content">
-                  <div class="person">
-                    <h4>namePerson</h4>
-                    <span>3j</span>
-                  </div>
-                  <p>Wow amazing shot</p>
-                  <div class="replay">
-                    <button class="replay">reply</button>
-                    <button class="translation">see translation</button>
-                  </div>
-                  <div class="answers">
-                    <button class="see_comment">
-                      <span class="hide_com">Hide all responses</span>
-                      <span class="show_c"><span class="line"></span> See the <span>1</span> answers</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div class="like">
-                <img class="not_loved" src="{% static 'images/love.png' %}" alt="" />
-                <img class="loved" src="{% static 'images/heart.png' %}" alt="" />
-                <p>55</p>
-              </div>
-            </div>
-            <div class="responses">
-              <div class="response comment">
-                <div class="d-flex">
-                  <div class="img">
-                    <img src="{% static 'images/profile_img.jpg' %}" alt="" />
-                  </div>
-                  <div class="content">
-                    <div class="person">
-                      <h4>namePerson</h4>
-                      <span>3j</span>
-                    </div>
-                    <p>Wow amazing shot</p>
-                    <div class="replay">
-                      <button>reply</button>
-                      <button>see translation</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="like">
-                  <img class="not_loved" src="{% static 'images/love.png' %}" alt="" />
-                  <img class="loved" src="{% static 'images/heart.png' %}" alt="" />
-                  <p>55</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <form method="post">
-            <div class="input">
-              <img src="{% static 'images/profile_img.jpg' %}" alt="" />
-              <input type="text" id="emoji_comment" placeholder="Add a comment..." />
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+{% block container %}
 
-  <!-- Modal for sending posts -->
-  <div class="modal fade" id="send_message_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Share</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="send">
-            <div class="search_person">
-              <p>To:</p>
-              <input type="text" placeholder="Search" />
-            </div>
-            <p>Suggested</p>
-            <div class="people">
-              <div class="person">
-                <div class="d-flex">
-                  <div class="img">
-                    <img src="{% static 'images/profile_img.jpg' %}" alt="" />
-                  </div>
-                  <div class="content">
-                    <div class="person">
-                      <h4>namePerson</h4>
-                      <span>zim ess</span>
+    <div class="post_page">
+        <!-- Reels Section -->
+        <div class="reels">
+            {% for reel in reels %}
+                <div class="reel">
+                    <div class="reel_user">
+                        {% if reel.user.image %}
+                            <img src="{{ reel.user.image.url }}" alt="{{ reel.user.username }}"/>
+                        {% else %}
+                            <img src="{% static 'images/profile_img.jpg' %}" alt="{{ reel.user.username }}"/>
+                        {% endif %}
+                        <h4>{{ reel.user.username }}</h4>
                     </div>
-                  </div>
-                </div>
-                <div class="circle">
-                  <span></span>
-                </div>
-              </div>
-            </div>
-            <!-- Repeat "person" section as needed -->
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary">Send</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Create model -->
-  <div class="modal fade" id="create_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title w-100 fs-5 d-flex align-items-end justify-content-between" id="exampleModalLabel">
-            <span class="title_create">Create new post</span>
-            <button class="next_btn_post btn_link"></button>
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <img class="up_load" src="{% static 'images/upload.png' %}" alt="upload" />
-          <p>Drag photos and videos here</p>
-          <button class="btn btn-primary btn_upload">
-            select from your computer<form id="upload-form">
-              <input class="input_select" type="file" id="image-upload" name="image-upload" />
-            </form>
-          </button>
-          <div id="image-container" class="hide_img"></div>
-          <div id="image_description" class="hide_img">
-            <div class="img_p"></div>
-            <div class="description">
-              <div class="cart">
-                <div>
-                  <div class="img">
-                    <img src="{% static 'images/profile_img.jpg' %}" />
-                  </div>
-                  <div class="info">
-                    <p class="name">Zineb_essoussi</p>
-                  </div>
+                    <div class="reel_media">
+                        <video controls>
+                            <source src="{{ reel.media.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+
+                    <div class="reel_caption">
+                        <p>{{ reel.caption }}</p>
+                    </div>
+
+                    <div class="reel_interactions">
+                        <button class="like_button">
+                            <img src="{% static 'images/love.png' %}" alt="like icon">
+                            <span>{{ reel.get_number_of_likes }}</span>
+                        </button>
+                        <button class="comment_button" data-bs-toggle="modal" data-bs-target="#message_modal">
+                            <img src="{% static 'images/comment.png' %}" alt="comment icon">
+                            <span>{{ reel.get_number_of_comments }}</span>
+                        </button>
+                    </div>
                 </div>
-              </div>
-              <form>
-                <textarea type="text" id="emoji_create" placeholder="write your comment"></textarea>
-              </form>
-            </div>
-          </div>
-          <div class="post_published hide_img">
-            <img src="{% static 'images/uploaded_post.gif' %}" alt="" />
-          </div>
+            {% endfor %}
         </div>
-      </div>
+
+        <!-- Modal for Comments -->
+        <div class="modal fade" id="message_modal" tabindex="-1" aria-labelledby="commentsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="commentsLabel">Comments</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="comments">
+                            {% for comment in reel.reels_comments.all %}
+                                <div class="comment">
+                                    <div class="comment_user">
+                                        {% if comment.user.image %}
+                                            <img src="{{ comment.user.image.url }}" alt="{{ comment.user.username }}">
+                                        {% else %}
+                                            <img src="{% static 'images/profile_img.jpg' %}"
+                                                 alt="{{ comment.user.username }}">
+                                        {% endif %}
+                                        <div class="comment_info">
+                                            <h6>{{ comment.user.username }}</h6>
+                                            <p>{{ comment.comment }}</p>
+                                            <small>{{ comment.date|timesince }} ago</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <p>No comments yet.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" name="comment" class="form-control" placeholder="Add a comment...">
+                                <button class="btn btn-primary" type="submit">Post</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+
 {% endblock %}

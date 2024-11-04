@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 
@@ -183,3 +184,19 @@ def follow_unfollow(request, username):
         request.user.following.add(user_to_follow)
 
     return redirect('other_users', username=username)
+
+
+def search_users(request):
+    query = request.POST.get("query", "")
+    results = UserProfile.objects.filter(username__icontains=query, is_public=True) if query else []
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # AJAX check
+        results_data = [
+            {
+                "username": user.username,
+                "full_name": user.get_full_name(),
+                "image_url": user.image.url if user.image else "images/profile_img.jpg"
+            }
+            for user in results
+        ]
+        return JsonResponse({"results": results_data})
+    return render(request, "base.html", {"query": query, "results": results})

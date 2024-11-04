@@ -1,6 +1,6 @@
 from django.urls import path
 from apps.views import UserProfileView, HomeView, ExploreView, ReelsView, MessageView, sign_up, sign_in, sign_out, \
-    edit_profile, create_post, follow_unfollow
+    edit_profile, create_post, follow_unfollow, search_users
 
 urlpatterns = [
     path("", HomeView, name="home"),
@@ -17,5 +17,7 @@ urlpatterns = [
     path('create-post/', create_post, name='create_post'),
 
     path('<str:username>/follow/', follow_unfollow, name='follow_unfollow'),
+
+    path("search/", search_users, name="search_users"),
 
 ]
